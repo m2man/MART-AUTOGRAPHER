@@ -18,4 +18,4 @@ run the command `tensorboard --logdir= RUN_1/` to visualize the Loss, Accuracy, 
 
 ## Initial Result
 Currently, we merged both trainA and trainB into 1 dataset and split train-val-test subsets based on it. The proportion was 0.8, 0.1, 0.1 for each activity. 
-The model achieved 81.5% accuracy on the validate set (about 170 images) using Adam optimizer based on RUN_1. Download the pretrained model [here](https://drive.google.com/file/d/1Z_bVqKSUnxY8Edyw8sowguDa6-XU_AYJ/view?usp=sharing)
+The model achieved 87.2% accuracy on the validate set (about 170 images) using Adam optimizer based on RUN_1_Unfreeze. We first freeze the backbone (EfficientNet) and only train the transfer layers until converge then trained all layers. Download the pretrained model [here](https://drive.google.com/file/d/1PP6erGXE9hdX3hTDCzwEvQ3e3l5XZzxD/view?usp=sharing)

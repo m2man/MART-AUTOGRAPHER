@@ -25,6 +25,11 @@ class MART_Trainer():
         self.val_txt = json_info['val_txt']
         
         try:
+            self.freeze = json_info['freeze'] # Mostly is NONE
+        except:
+            self.freeze = True
+        
+        try:
             self.test_txt = json_info['test_txt'] # Mostly is NONE
         except:
             self.test_txt = None
@@ -48,7 +53,7 @@ class MART_Trainer():
         # ========== SETTINGS: DEFINES MODEL ==========
         if 'efficient' in self.model_name.lower():
             structure = self.model_name.split('-')[-1].lower() # b0 or b4
-            self.model = EfficientNet_MART(classCount=20, structure=structure, dropout=self.dropout)
+            self.model = EfficientNet_MART(classCount=20, structure=structure, dropout=self.dropout, freeze=self.freeze)
             self.model = self.model.to(device)
         
         # ========== SETTINGS: DATA TRANSFORMS ==========
@@ -74,7 +79,7 @@ class MART_Trainer():
         except:
             timestampLaunch = 'undefined'
         model_info_log = open(f"{self.save_dir}/{self.model_name}-{timestampLaunch}-INFO.log", "w")
-        model_info_log.write(f"===== {self.model_name} =====\nBATCH_SIZE: {self.batch_size}\nMAX_EPOCH: {self.max_epoch}\nDROPOUT: {self.dropout}\nLR: {self.learning_rate}\nOPTIMIZER: {self.optimizer}\n")
+        model_info_log.write(f"===== {self.model_name} =====\nBATCH_SIZE: {self.batch_size}\nMAX_EPOCH: {self.max_epoch}\nDROPOUT: {self.dropout}\nLR: {self.learning_rate}\nOPTIMIZER: {self.optimizer}\nFREEZE: {self.freeze}\n")
         if self.checkpoint is not None:
             model_info_log.write(f"FROM CHECKPOINT:{self.checkpoint}\n")
         model_info_log.close()
@@ -121,6 +126,7 @@ class MART_Trainer():
         
         # ---- TRAIN THE NETWORK
         lossMIN = 100000
+        accMax = 0
         flag = 0
         count_change_loss = 0
 
@@ -146,16 +152,19 @@ class MART_Trainer():
 
             scheduler.step(lossVal)
 
-            if lossVal < lossMIN:
+            #if lossVal < lossMIN:
+            if acc > accMax:
                 count_change_loss = 0
-                lossMIN = lossVal    
-                torch.save({'epoch': epochID + 1, 'state_dict': self.model.state_dict(), 'best_loss': lossMIN}, f"{self.save_dir}/{self.model_name}-{self.timestampLaunch}.pth.tar")
+                if lossVal < lossMIN:
+                    lossMIN = lossVal 
+                accMax = acc
+                torch.save({'epoch': epochID + 1, 'state_dict': self.model.state_dict(), 'best_loss': lossMIN, 'best_acc': accMax}, f"{self.save_dir}/{self.model_name}-{self.timestampLaunch}.pth.tar")
                 print ('Epoch [' + str(epochID + 1) + '] [save] [' + timestampEND + '] lossVal= ' + str(lossVal) + ' --- ACC: ' + str(acc))
-                f_log.write(f"[{timestampEND} - {epochID+1} - SAVE]\nLoss_Train: {lossTrain}\nLoss_Val: {lossVal}\nACC_Val: {acc}")
+                f_log.write(f"[{timestampEND} - {epochID+1} - SAVE]\nLoss_Train: {lossTrain}\nLoss_Val: {lossVal}\nACC_Val: {acc}\n")
             else:
                 count_change_loss += 1
                 print ('Epoch [' + str(epochID + 1) + '] [----] [' + timestampEND + '] lossVal= ' + str(lossVal) + ' --- ACC: ' + str(acc))
-                f_log.write(f"[{timestampEND} - {epochID+1}]\nLoss_Train: {lossTrain}\nLoss_Val: {lossVal}\nACC_Val: {acc}")
+                f_log.write(f"[{timestampEND} - {epochID+1}]\nLoss_Train: {lossTrain}\nLoss_Val: {lossVal}\nACC_Val: {acc}\n")
 
             writer.add_scalars('Loss', {'train': lossTrain}, epochID)
             writer.add_scalars('Loss', {'val': lossVal}, epochID)

@@ -2,20 +2,21 @@ from mart_controller import MART_Trainer
 import os
 
 def run_train():
-    BATCH_SIZE = 256
+    BATCH_SIZE = 64
     CROP_SIZE = 224 # DO NOT CHANGE THIS
     MAX_EPOCH = 200
     DATA_DIR = '/mnt/sda/hong01-data/MART_DATA/OUTPUT_MERGED/AUTOGRAPHER'
     TRAIN_TXT = 'dataset/train.txt'
     VAL_TXT = 'dataset/val.txt'
     TEST_TXT = 'dataset/test.txt'
-    CHECKPOINT = None 
-    #CHECKPOINT = 'RUN_1/EFFICIENT-B4-14082020-164740.pth.tar'
-    SAVE_DIR = 'RUN_2'
-    OPTIM = 'SGD'
+    #CHECKPOINT = None 
+    CHECKPOINT = 'RUN_1/EFFICIENT-B4-14082020-164740.pth.tar'
+    SAVE_DIR = 'RUN_3'
+    OPTIM = 'Adam'
     MODEL_NAME = 'EFFICIENT-B4'
     DROPOUT = 0.5
-    LR = 0.01
+    LR = 0.005
+    FREEZE = False
     
     if not os.path.exists(f'{SAVE_DIR}'):
         print(f'Creating {SAVE_DIR} folder')
@@ -34,6 +35,7 @@ def run_train():
     model_info['model_name'] = MODEL_NAME
     model_info['dropout'] = DROPOUT
     model_info['learning_rate'] = LR
+    model_info['freeze'] = FREEZE
     
     if CHECKPOINT is not None:
         model_info['checkpoint'] = CHECKPOINT
