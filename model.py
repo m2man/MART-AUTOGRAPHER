@@ -18,7 +18,7 @@ from efficientnet_pytorch import EfficientNet
 device = torch.device('cuda')
 
 class EfficientNet_MART(nn.Module):
-    def __init__(self, classCount=20, structure='b4', freeze=True, dropout=None):
+    def __init__(self, classCount=20, structure='b4', freeze=True, dropout=None, hidden_size=1024, batch_norm=False):
         super(EfficientNet_MART, self).__init__()
         # Init model
         self.classCount = classCount
@@ -26,20 +26,26 @@ class EfficientNet_MART(nn.Module):
         self.dropout = dropout
         full_structure = 'efficientnet-' + self.structure
         self.backbone = EfficientNet.from_pretrained(full_structure)
+        self.hidden_size = hidden_size
         
         # freeze backbone
         if freeze:
             for n, p in self.backbone.named_parameters():
                 p.requires_grad = False
-                
+        
+        if batch_norm:
+            self.bn = nn.BatchNorm1d(num_features=self.hidden_size)
+        else:
+            self.bn = None
+            
         # Final linear layer
         self.avg_pooling = nn.AdaptiveAvgPool2d(1)
         if structure == 'b4':
             features_shape = 1792
         if structure == 'b0':
             features_shape = 1280
-        self.fc = nn.Linear(features_shape, 1048)
-        self.fc2 = nn.Linear(1048, self.classCount)
+        self.fc = nn.Linear(features_shape, self.hidden_size)
+        self.fc2 = nn.Linear(self.hidden_size, self.classCount)
         if self.dropout:
             self.dropout = nn.Dropout(dropout)
             self.dropout2 = nn.Dropout(dropout)
@@ -57,6 +63,8 @@ class EfficientNet_MART(nn.Module):
         if self.dropout:
             x = self.dropout(x)
         x = self.fc(x)
+        if self.bn is not None:
+            x = self.bn(x)
         x = F.relu(x)
         if self.dropout:
             x = self.dropout2(x)

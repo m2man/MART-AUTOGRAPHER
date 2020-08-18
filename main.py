@@ -10,13 +10,16 @@ def run_train():
     VAL_TXT = 'dataset/val.txt'
     TEST_TXT = 'dataset/test.txt'
     #CHECKPOINT = None 
-    CHECKPOINT = 'RUN_1/EFFICIENT-B4-14082020-164740.pth.tar'
-    SAVE_DIR = 'RUN_3'
+    #CHECKPOINT = 'RUN_0/EFFICIENT-B4-17082020-233739.pth.tar'
+    CHECKPOINT = 'RUN_4/EFFICIENT-B4-18082020-000359.pth.tar'
+    SAVE_DIR = 'RUN_4_Unfreeze'
     OPTIM = 'Adam'
     MODEL_NAME = 'EFFICIENT-B4'
     DROPOUT = 0.5
-    LR = 0.005
+    LR = 0.001
     FREEZE = False
+    HIDDEN_SIZE = 1024
+    BATCH_NORM = True
     
     if not os.path.exists(f'{SAVE_DIR}'):
         print(f'Creating {SAVE_DIR} folder')
@@ -36,6 +39,8 @@ def run_train():
     model_info['dropout'] = DROPOUT
     model_info['learning_rate'] = LR
     model_info['freeze'] = FREEZE
+    model_info['hidden_size'] = HIDDEN_SIZE
+    model_info['batch_norm'] = BATCH_NORM
     
     if CHECKPOINT is not None:
         model_info['checkpoint'] = CHECKPOINT

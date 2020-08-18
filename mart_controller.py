@@ -25,9 +25,19 @@ class MART_Trainer():
         self.val_txt = json_info['val_txt']
         
         try:
+            self.hidden_size = json_info['hidden_size'] # Mostly is NONE
+        except:
+            self.hidden_size = 1024
+        
+        try:
             self.freeze = json_info['freeze'] # Mostly is NONE
         except:
             self.freeze = True
+        
+        try:
+            self.batch_norm = json_info['batch_norm'] # Mostly is NONE
+        except:
+            self.batch_norm = False
         
         try:
             self.test_txt = json_info['test_txt'] # Mostly is NONE
@@ -53,7 +63,7 @@ class MART_Trainer():
         # ========== SETTINGS: DEFINES MODEL ==========
         if 'efficient' in self.model_name.lower():
             structure = self.model_name.split('-')[-1].lower() # b0 or b4
-            self.model = EfficientNet_MART(classCount=20, structure=structure, dropout=self.dropout, freeze=self.freeze)
+            self.model = EfficientNet_MART(classCount=20, structure=structure, dropout=self.dropout, freeze=self.freeze, hidden_size = self.hidden_size, batch_norm=self.batch_norm)
             self.model = self.model.to(device)
         
         # ========== SETTINGS: DATA TRANSFORMS ==========
@@ -79,7 +89,7 @@ class MART_Trainer():
         except:
             timestampLaunch = 'undefined'
         model_info_log = open(f"{self.save_dir}/{self.model_name}-{timestampLaunch}-INFO.log", "w")
-        model_info_log.write(f"===== {self.model_name} =====\nBATCH_SIZE: {self.batch_size}\nMAX_EPOCH: {self.max_epoch}\nDROPOUT: {self.dropout}\nLR: {self.learning_rate}\nOPTIMIZER: {self.optimizer}\nFREEZE: {self.freeze}\n")
+        model_info_log.write(f"===== {self.model_name} =====\nBATCH_SIZE: {self.batch_size}\nMAX_EPOCH: {self.max_epoch}\nDROPOUT: {self.dropout}\nLR: {self.learning_rate}\nOPTIMIZER: {self.optimizer}\nFREEZE: {self.freeze}\nHIDDEN_SIZE: {self.hidden_size}\nBATCH_NORM: {self.batch_norm}\n")
         if self.checkpoint is not None:
             model_info_log.write(f"FROM CHECKPOINT:{self.checkpoint}\n")
         model_info_log.close()
@@ -111,7 +121,7 @@ class MART_Trainer():
             optimizer = optim.Adam (self.model.parameters(), lr=self.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=1e-5)
         if self.optimizer.lower() == 'sgd':
             optimizer = optim.SGD (self.model.parameters(), lr=self.learning_rate, momentum=0.9, weight_decay=1e-5)
-        scheduler = ReduceLROnPlateau(optimizer, factor = 0.2, patience=4, mode = 'min', verbose=True, min_lr=1e-5)
+        scheduler = ReduceLROnPlateau(optimizer, factor = 0.2, patience=4, mode = 'min', verbose=True, min_lr=5e-5)
         
         # ----- SETTINGS: LOSS FUNCTION
         loss = torch.nn.CrossEntropyLoss()
@@ -150,14 +160,14 @@ class MART_Trainer():
             timestampDate = time.strftime("%d%m%Y")
             timestampEND = timestampDate + '-' + timestampTime
 
-            scheduler.step(lossVal)
+            scheduler.step(lossVal+2*(1-acc))
 
-            #if lossVal < lossMIN:
-            if acc > accMax:
+            if lossVal < lossMIN or acc > accMax:
                 count_change_loss = 0
                 if lossVal < lossMIN:
-                    lossMIN = lossVal 
-                accMax = acc
+                    lossMIN = lossVal
+                if acc > accMax:
+                    accMax = acc
                 torch.save({'epoch': epochID + 1, 'state_dict': self.model.state_dict(), 'best_loss': lossMIN, 'best_acc': accMax}, f"{self.save_dir}/{self.model_name}-{self.timestampLaunch}.pth.tar")
                 print ('Epoch [' + str(epochID + 1) + '] [save] [' + timestampEND + '] lossVal= ' + str(lossVal) + ' --- ACC: ' + str(acc))
                 f_log.write(f"[{timestampEND} - {epochID+1} - SAVE]\nLoss_Train: {lossTrain}\nLoss_Val: {lossVal}\nACC_Val: {acc}\n")
@@ -268,6 +278,16 @@ class MART_Evaluator():
             self.checkpoint = None
             
         try:
+            self.hidden_size = json_info['hidden_size'] # Mostly is NONE
+        except:
+            self.hidden_size = 1024
+        
+        try:
+            self.batch_norm = json_info['batch_norm'] # Mostly is NONE
+        except:
+            self.batch_norm = False
+            
+        try:
             self.dropout = json_info['dropout']
         except:
             self.dropout = None
@@ -275,7 +295,7 @@ class MART_Evaluator():
         # ========== SETTINGS: DEFINES MODEL ==========
         if 'efficient' in self.model_name.lower():
             structure = self.model_name.split('-')[-1].lower() # b0 or b4
-            self.model = EfficientNet_MART(classCount=20, structure=structure, dropout=self.dropout)
+            self.model = EfficientNet_MART(classCount=20, structure=structure, dropout=self.dropout, hidden_size = self.hidden_size, batch_norm=self.batch_norm)
             self.model = self.model.to(device)
         
         # ========== SETTINGS: DATA TRANSFORMS ==========
