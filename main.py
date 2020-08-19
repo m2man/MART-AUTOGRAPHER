@@ -2,7 +2,7 @@ from mart_controller import MART_Trainer
 import os
 
 def run_train():
-    BATCH_SIZE = 64
+    BATCH_SIZE = 128
     CROP_SIZE = 224 # DO NOT CHANGE THIS
     MAX_EPOCH = 200
     DATA_DIR = '/mnt/sda/hong01-data/MART_DATA/OUTPUT_MERGED/AUTOGRAPHER'
@@ -11,14 +11,14 @@ def run_train():
     TEST_TXT = 'dataset/test.txt'
     #CHECKPOINT = None 
     #CHECKPOINT = 'RUN_0/EFFICIENT-B4-17082020-233739.pth.tar'
-    CHECKPOINT = 'RUN_4/EFFICIENT-B4-18082020-000359.pth.tar'
-    SAVE_DIR = 'RUN_4_Unfreeze'
+    CHECKPOINT = 'RUN_5/EFFICIENT-B4-19082020-141114.pth.tar'
+    SAVE_DIR = 'RUN_5_Unfreeze'
     OPTIM = 'Adam'
     MODEL_NAME = 'EFFICIENT-B4'
     DROPOUT = 0.5
     LR = 0.001
     FREEZE = False
-    HIDDEN_SIZE = 1024
+    HIDDEN_SIZE = 512
     BATCH_NORM = True
     
     if not os.path.exists(f'{SAVE_DIR}'):
