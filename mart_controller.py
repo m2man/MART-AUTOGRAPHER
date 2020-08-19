@@ -366,9 +366,10 @@ class MART_Evaluator():
         return outLoss, accuracy
     
     # ---------- PREDICT ON CUSTOM IMAGE ---------
-    def test_image(self, image_path):
+    def test_image(self, image_path, props=True):
         # run the prediction on a image
         # input is the path to the image
+        # if props = True --> return softmax (probabilities) else log_softmax
         
         imageData = Image.open(image_path).convert('RGB')
         imageData = self.TransformSequenceVal(imageData)
@@ -377,9 +378,16 @@ class MART_Evaluator():
         with torch.no_grad():
             varInput = imageData.to(device)
             varOutput = self.model(varInput)
-            varOutput_softmax = torch.nn.functional.log_softmax(varOutput, dim=1)
+            if props:
+                varOutput_softmax = torch.nn.functional.softmax(varOutput, dim=1)
+            else:
+                varOutput_softmax = torch.nn.functional.log_softmax(varOutput, dim=1)
             varOutput_class = torch.max(varOutput_softmax, dim=1).indices
-        
-        return varOutput_class, varOutput_softmax
+            
+            pred_lbl = varOutput_class.item()
+            probs_lbl = varOutput_softmax.cpu().numpy()
+            probs_lbl = np.squeeze(probs_lbl)
+            
+        return pred_lbl, probs_lbl
         
         
