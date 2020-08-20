@@ -2,7 +2,7 @@ from mart_controller import MART_Trainer
 import os
 
 def run_train():
-    BATCH_SIZE = 128
+    BATCH_SIZE = 64
     CROP_SIZE = 224 # DO NOT CHANGE THIS
     MAX_EPOCH = 200
     DATA_DIR = '/mnt/sda/hong01-data/MART_DATA/OUTPUT_MERGED/AUTOGRAPHER'

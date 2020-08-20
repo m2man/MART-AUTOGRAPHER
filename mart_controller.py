@@ -121,7 +121,7 @@ class MART_Trainer():
             optimizer = optim.Adam (self.model.parameters(), lr=self.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=1e-5)
         if self.optimizer.lower() == 'sgd':
             optimizer = optim.SGD (self.model.parameters(), lr=self.learning_rate, momentum=0.9, weight_decay=1e-5)
-        scheduler = ReduceLROnPlateau(optimizer, factor = 0.2, patience=4, mode = 'min', verbose=True, min_lr=5e-5)
+        scheduler = ReduceLROnPlateau(optimizer, factor = 0.2, patience=4, mode = 'min', verbose=True, min_lr=1e-5)
         
         # ----- SETTINGS: LOSS FUNCTION
         loss = torch.nn.CrossEntropyLoss()
