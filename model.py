@@ -71,3 +71,16 @@ class EfficientNet_MART(nn.Module):
         x = self.fc2(x)
         
         return x
+
+    def extract_features(self, inputs):
+        x = self.backbone.extract_features(inputs)
+        # Pooling and final linear layer
+        x = self.avg_pooling(x)
+        #x = x.view(bs, -1)
+        x = x.flatten(start_dim=1)
+        if self.dropout:
+            x = self.dropout(x)
+        x = self.fc(x)
+        if self.bn is not None:
+            x = self.bn(x)
+        return x

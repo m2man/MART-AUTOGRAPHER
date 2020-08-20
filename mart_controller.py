@@ -389,5 +389,20 @@ class MART_Evaluator():
             probs_lbl = np.squeeze(probs_lbl)
             
         return pred_lbl, probs_lbl
+
+    # ---------- EXTRACT FEATURE ON CUSTOM IMAGE ---------
+    def extract_features_image(self, image_path):
+        # run the prediction on a image
+        # input is the path to the image
+        # if props = True --> return softmax (probabilities) else log_softmax
+        
+        imageData = Image.open(image_path).convert('RGB')
+        imageData = self.TransformSequenceVal(imageData)
+        imageData = imageData.unsqueeze(0) # add batch size as 1
+        # varInput = torch.autograd.Variable(imageData).to(device)
+        with torch.no_grad():
+            varInput = imageData.to(device)
+            ft = self.model.extract_features(varInput)
+        return ft
         
         
