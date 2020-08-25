@@ -1,5 +1,6 @@
 from controller import Trainer
 import os
+import joblib 
 
 def run_train():
     BATCH_SIZE = 64
