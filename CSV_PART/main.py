@@ -10,7 +10,7 @@ def run_train():
     # dict[task_id]['images'] = list of images within the task_id
     # dict[task_id]['features'] = nympy array (n_images, ft_dim=1024) features of each images
     
-    a = joblib.load('tabular_csv_only.joblib')
+    a = joblib.load('tabular_only_csv.joblib')
     a = a.sample(frac=1)
     train_portion = 0.8
     train_numb = int(train_portion * len(a))

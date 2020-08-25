@@ -37,7 +37,7 @@ class Tabular_Model(nn.Module):
   
     def forward(self, inputs):
         x = self.extract_features(inputs)
-        x = self.classifer(x)
+        x = self.classifier(x)
         return x
 
     def extract_features(self, inputs):

@@ -1,4 +1,4 @@
-from model import MART_Task
+from model import Tabular_Model
 from dataloader import MyDatasetGenerator
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -54,7 +54,7 @@ class Trainer():
         except:
             timestampLaunch = 'undefined'
         model_info_log = open(f"{self.save_dir}/{self.model_name}-{timestampLaunch}-INFO.log", "w")
-        model_info_log.write(f"===== {self.model_name} =====\nBATCH_SIZE: {self.batch_size}\nMAX_EPOCH: {self.max_epoch}\nDROPOUT: {self.dropout}\nLR: {self.learning_rate}\nOPTIMIZER: {self.optimizer}\nLAYER_DIM: {self.layer_dim}\nBATCH_NORM: {self.batch_norm}\nDATA_MODE: {self.data_mode}\nINPUT_DIM: {self.input_dim}\n")
+        model_info_log.write(f"===== {self.model_name} =====\nBATCH_SIZE: {self.batch_size}\nMAX_EPOCH: {self.max_epoch}\nDROPOUT: {self.dropout}\nLR: {self.learning_rate}\nOPTIMIZER: {self.optimizer}\nLAYER_DIM: {self.layer_dim}\nBATCH_NORM: {self.batch_norm}\nINPUT_DIM: {self.input_dim}\n")
         if self.checkpoint is not None:
             model_info_log.write(f"FROM CHECKPOINT:{self.checkpoint}\n")
         model_info_log.close()

@@ -12,12 +12,12 @@ class MyDatasetGenerator (Dataset):
         self.ft = []
         
         for row in range(len(df)):
-            data = df.iloc[row, :]
+            data = np.asarray(df.iloc[row, :])
             ft = data[0:-1]
             self.ft.append(ft)
             
             lbl = int(data[-1])-1
-            lbl = np.array([int(act[-2:])-1])
+            lbl = np.array([lbl])
             self.lbl.append(lbl)
 
     def __getitem__(self, index):
