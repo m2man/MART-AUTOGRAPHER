@@ -39,19 +39,19 @@ task_id = [f"{x}_{y}" for x, y in zip(sub_id, event_id)]
 task_ft = dict()
 # loop start
 for task in tqdm(task_id):
-  task = task_id[0]
-  if RUN == 'trainA' or RUN == 'trainB':
-    task = task.split('_')
-    task = f"{task[0]}_{RUN}_{task[1]}"
-  task_imgs = [x for x in all_img_files if task in x]
-  task_ft[task] = {}
-  task_ft[task]['images'] = task_imgs
-  task_imgs_ft = np.zeros((len(task_imgs), HIDDEN_SIZE))
-  for idx, img in enumerate(task_imgs):
-    img_path = f"{IMG_DIR}/{img}"
-    img_ft = evaluator.extract_features_image(img_path)
-    task_imgs_ft[idx] = img_ft.cpu().numpy()
-  task_ft[task]['features'] = task_imgs_ft
+    task = task_id[0]
+    if RUN == 'trainA' or RUN == 'trainB':
+        task = task.split('_')
+        task = f"{task[0]}_{RUN}_{task[1]}"
+    task_imgs = [x for x in all_img_files if task in x]
+    task_ft[task] = {}
+    task_ft[task]['images'] = task_imgs
+    task_imgs_ft = np.zeros((len(task_imgs), HIDDEN_SIZE))
+    for idx, img in enumerate(task_imgs):
+        img_path = f"{IMG_DIR}/{img}"
+        img_ft = evaluator.extract_features_image(img_path)
+        task_imgs_ft[idx] = img_ft.cpu().numpy()
+    task_ft[task]['features'] = task_imgs_ft
 # loop end
     
 joblib.dump(task_ft, f'task_features_{RUN}_{CHECKPOINT.split('/')[0]}.joblib')
