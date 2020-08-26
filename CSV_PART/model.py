@@ -41,20 +41,23 @@ class Tabular_Model(nn.Module):
         return x
 
     def extract_features(self, inputs, train=True):
-        x = self.firstbn(inputs)
+        if train:
+            x = self.firstbn(inputs)
+        else:
+            x = inputs
         for step in range(len(self.layer_dim)-1):
             x = self.LinearList[step](x)
-            if self.batch_norm is not None:
+            if self.batch_norm is not None and train:
                 x = self.BatchnormList[step](x)
             x = F.relu(x)
-            if self.dropout is not None:
+            if self.dropout is not None and train:
                 x = self.DropoutList[step](x)
         
         x = self.LinearList[-1](x)
-        if self.batch_norm is not None:
+        if self.batch_norm is not None and train:
             x = self.BatchnormList[-1](x)
         if train:
             x = F.relu(x)
-        if self.dropout is not None:
+        if self.dropout is not None and train:
             x = self.DropoutList[-1](x)
         return x

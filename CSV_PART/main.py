@@ -82,7 +82,7 @@ def run_kfold(k_fold=10):
     print(f"[AccMean]Min-Max-Mean: {np.min(acc_val)}-{np.max(acc_val)}-{np.mean(acc_val)}")
 
 def run_extract_features():
-    a = joblib.load('tabular.joblib')
+    a = joblib.load('tabular_train.joblib')
     event_id = list(a['event_id'])
     source = list(a['source'])
     sub_id = list(a['sub_id'])
@@ -103,6 +103,7 @@ def run_extract_features():
     model_info['model_name'] = MODEL_NAME
     model_info['dropout'] = DROPOUT
     model_info['batch_norm'] = BATCH_NORM
+    model_info['checkpoint'] = CHECKPOINT
     evaluator = Evaluator(json_info=model_info)
     
     print('Embedding features ...')
@@ -115,6 +116,6 @@ def run_extract_features():
         embed = embed.cpu().numpy()
         embed_result[task_id] = embed
     
-    joblib.dump(embed_result, 'tabular_embeded_ft.joblib')
+    joblib.dump(embed_result, 'tabular_embeded_ft_train.joblib')
     
 run_extract_features()

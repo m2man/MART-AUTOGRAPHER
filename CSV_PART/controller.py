@@ -292,7 +292,7 @@ class Evaluator():
         lossValNorm = 0
         #losstensorMean = 0
         
-        self.model.eval()
+        # self.model.eval()
         with torch.no_grad():
             for i, (input, target) in enumerate (dataLoaderVal):
                 # target = target.cuda(async=True)
@@ -323,9 +323,10 @@ class Evaluator():
     # ---------- PREDICT ON CUSTOM TASK_ID (ImageFT) ---------
     def test_task(self, inputs, props=True):
         task_ft = torch.from_numpy(inputs)
-
+        task_ft = task_ft.type(torch.FloatTensor)
+        task_ft = task_ft.unsqueeze(0)
         # varInput = torch.autograd.Variable(imageData).to(device)
-        self.model.eval()
+        # self.model.eval()
         with torch.no_grad():
             varInput = task_ft.to(device)
             varOutput = self.model(varInput)
@@ -344,7 +345,7 @@ class Evaluator():
     # ---------- EXTRACT FEATURE ON CUSTOM IMAGE ---------
     def extract_features(self, row_ft):
         # row_ft is the standardized numpy array
-        self.model.eval()
+        # self.model.eval()
         task_ft = torch.from_numpy(row_ft)
         task_ft = task_ft.type(torch.FloatTensor)
         task_ft = task_ft.unsqueeze(0)
