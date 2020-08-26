@@ -402,7 +402,7 @@ class MART_Evaluator():
         # varInput = torch.autograd.Variable(imageData).to(device)
         with torch.no_grad():
             varInput = imageData.to(device)
-            ft = self.model.extract_features(varInput)
+            ft = self.model.extract_features(inputs=varInput, train=False)
         return ft
         
         

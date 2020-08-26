@@ -137,6 +137,9 @@ class Trainer():
                 torch.save({'epoch': epochID + 1, 'state_dict': self.model.state_dict(), 'best_loss': lossMIN, 'best_acc': accMax}, f"{self.save_dir}/{self.model_name}-{self.timestampLaunch}.pth.tar")
                 print ('Epoch [' + str(epochID + 1) + '] [save] [' + timestampEND + '] lossVal= ' + str(lossVal) + ' --- ACC: ' + str(acc))
                 f_log.write(f"[{timestampEND} - {epochID+1} - SAVE]\nLoss_Train: {lossTrain}\nLoss_Val: {lossVal}\nACC_Val: {acc}\n")
+                loss_val_save = lossVal
+                loss_train_save = lossTrain
+                acc_val_save = acc
             else:
                 count_change_loss += 1
                 print ('Epoch [' + str(epochID + 1) + '] [----] [' + timestampEND + '] lossVal= ' + str(lossVal) + ' --- ACC: ' + str(acc))
@@ -156,7 +159,13 @@ class Trainer():
 
         f_log.close()
         writer.close()
-
+        
+        output = dict()
+        output['loss_val_save'] = loss_val_save
+        output['loss_train_save'] = loss_train_save
+        output['acc_val_save'] = acc_val_save
+        
+        return output
     # ---------- 1-EPOCH TRAIN ---------
     def epochTrain(self, dataLoader, optimizer, loss):
       
@@ -232,14 +241,14 @@ class Evaluator():
     def __init__(self, json_info):
         super(Evaluator, self).__init__()
         # ========== INIT INFORMATION ==========
-        self.model_name = json_info['model_name']
-        self.ft_dim= json_info['ft_dim']
+        # self.model_name = json_info['model_name']
+        self.input_dim= json_info['input_dim']
 
         try:
             self.checkpoint = json_info['checkpoint'] # Mostly is NONE
         except:
             self.checkpoint = None
-          
+        
         self.layer_dim = json_info['layer_dim'] # Mostly is NONE
   
         try:
@@ -282,7 +291,8 @@ class Evaluator():
         lossVal = 0
         lossValNorm = 0
         #losstensorMean = 0
-
+        
+        self.model.eval()
         with torch.no_grad():
             for i, (input, target) in enumerate (dataLoaderVal):
                 # target = target.cuda(async=True)
@@ -312,13 +322,10 @@ class Evaluator():
   
     # ---------- PREDICT ON CUSTOM TASK_ID (ImageFT) ---------
     def test_task(self, inputs, props=True):
-        '''
-        custom_dict['images'] = ['1001_act01_trainA', '1001_pred03_test']
-        custom_dict['features'] = numpy array (n_images, embed_dim)
-        '''
         task_ft = torch.from_numpy(inputs)
 
         # varInput = torch.autograd.Variable(imageData).to(device)
+        self.model.eval()
         with torch.no_grad():
             varInput = task_ft.to(device)
             varOutput = self.model(varInput)
@@ -333,3 +340,15 @@ class Evaluator():
             probs_lbl = np.squeeze(probs_lbl)
         
         return pred_lbl, probs_lbl
+    
+    # ---------- EXTRACT FEATURE ON CUSTOM IMAGE ---------
+    def extract_features(self, row_ft):
+        # row_ft is the standardized numpy array
+        self.model.eval()
+        task_ft = torch.from_numpy(row_ft)
+        task_ft = task_ft.type(torch.FloatTensor)
+        task_ft = task_ft.unsqueeze(0)
+        with torch.no_grad():
+            varInput = task_ft.to(device)
+            ft = self.model.extract_features(inputs=varInput, train=False)
+        return ft

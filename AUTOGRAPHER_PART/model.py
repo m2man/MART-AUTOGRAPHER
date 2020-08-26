@@ -54,25 +54,12 @@ class EfficientNet_MART(nn.Module):
         #bs = inputs.size(0)
 
         # Convolution layers
-        x = self.backbone.extract_features(inputs)
-
-        # Pooling and final linear layer
-        x = self.avg_pooling(x)
-        #x = x.view(bs, -1)
-        x = x.flatten(start_dim=1)
-        if self.dropout:
-            x = self.dropout(x)
-        x = self.fc(x)
-        if self.bn is not None:
-            x = self.bn(x)
-        x = F.relu(x)
-        if self.dropout:
-            x = self.dropout2(x)
+        x = self.extract_features(inputs=inputs, train=True)
         x = self.fc2(x)
         
         return x
 
-    def extract_features(self, inputs):
+    def extract_features(self, inputs, train=True):
         x = self.backbone.extract_features(inputs)
         # Pooling and final linear layer
         x = self.avg_pooling(x)
@@ -80,7 +67,12 @@ class EfficientNet_MART(nn.Module):
         x = x.flatten(start_dim=1)
         if self.dropout:
             x = self.dropout(x)
+            
         x = self.fc(x)
         if self.bn is not None:
             x = self.bn(x)
+        if train:
+            x = F.relu(x)
+        if self.dropout:
+            x = self.dropout2(x)
         return x

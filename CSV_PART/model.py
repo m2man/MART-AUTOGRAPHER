@@ -36,17 +36,25 @@ class Tabular_Model(nn.Module):
 
   
     def forward(self, inputs):
-        x = self.extract_features(inputs)
+        x = self.extract_features(inputs=inputs, train=True)
         x = self.classifier(x)
         return x
 
-    def extract_features(self, inputs):
+    def extract_features(self, inputs, train=True):
         x = self.firstbn(inputs)
-        for step in range(len(self.layer_dim)):
+        for step in range(len(self.layer_dim)-1):
             x = self.LinearList[step](x)
             if self.batch_norm is not None:
                 x = self.BatchnormList[step](x)
             x = F.relu(x)
             if self.dropout is not None:
                 x = self.DropoutList[step](x)
+        
+        x = self.LinearList[-1](x)
+        if self.batch_norm is not None:
+            x = self.BatchnormList[-1](x)
+        if train:
+            x = F.relu(x)
+        if self.dropout is not None:
+            x = self.DropoutList[-1](x)
         return x

@@ -3,3 +3,5 @@ __pycache__/
 *.pth.tar
 *.pth
 learn.joblib
+INCLUDE_NA/
+NOT_INCLUDE_NA/
