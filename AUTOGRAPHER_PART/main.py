@@ -2,19 +2,18 @@ from mart_controller import MART_Trainer
 import os
 
 def run_train():
-    BATCH_SIZE = 64
+    BATCH_SIZE = 512
     CROP_SIZE = 224 # DO NOT CHANGE THIS
     MAX_EPOCH = 200
     DATA_DIR = '/mnt/sda/hong01-data/MART_DATA/OUTPUT_MERGED/AUTOGRAPHER'
-    TRAIN_TXT = 'dataset/train.txt'
-    VAL_TXT = 'dataset/val.txt'
-    TEST_TXT = 'dataset/test.txt'
+    TRAIN_TXT = '../dataset/train.txt'
+    VAL_TXT = '../dataset/val.txt'
+    TEST_TXT = '../dataset/test.txt'
     #CHECKPOINT = None 
-    #CHECKPOINT = 'RUN_0/EFFICIENT-B4-17082020-233739.pth.tar'
-    CHECKPOINT = 'RUN_5/EFFICIENT-B4-19082020-141114.pth.tar'
-    SAVE_DIR = 'RUN_5_Unfreeze'
+    CHECKPOINT = 'RUN_6/RESNET34-26082020-233417.pth.tar'
+    SAVE_DIR = 'RUN_6_Unfreeze'
     OPTIM = 'Adam'
-    MODEL_NAME = 'EFFICIENT-B4'
+    MODEL_NAME = 'RESNET34'
     DROPOUT = 0.5
     LR = 0.001
     FREEZE = False

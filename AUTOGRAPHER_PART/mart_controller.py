@@ -1,4 +1,4 @@
-from model import EfficientNet_MART
+from model import EfficientNet_MART, ResNet34_MART
 from dataloader import MyDatasetGenerator
 import torchvision.transforms as transforms
 import torch.optim as optim
@@ -64,7 +64,11 @@ class MART_Trainer():
         if 'efficient' in self.model_name.lower():
             structure = self.model_name.split('-')[-1].lower() # b0 or b4
             self.model = EfficientNet_MART(classCount=20, structure=structure, dropout=self.dropout, freeze=self.freeze, hidden_size = self.hidden_size, batch_norm=self.batch_norm)
-            self.model = self.model.to(device)
+            
+        if 'resnet' in self.model_name.lower():
+            self.model = ResNet34_MART(classCount=20, dropout=self.dropout, freeze=self.freeze, hidden_size = self.hidden_size, batch_norm=self.batch_norm)
+        
+        self.model = self.model.to(device)
         
         # ========== SETTINGS: DATA TRANSFORMS ==========
         normalize = transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
@@ -296,7 +300,11 @@ class MART_Evaluator():
         if 'efficient' in self.model_name.lower():
             structure = self.model_name.split('-')[-1].lower() # b0 or b4
             self.model = EfficientNet_MART(classCount=20, structure=structure, dropout=self.dropout, hidden_size = self.hidden_size, batch_norm=self.batch_norm)
-            self.model = self.model.to(device)
+            
+        if 'resnet' in self.model_name.lower():
+            self.model = ResNet34_MART(classCount=20, dropout=self.dropout, freeze=self.freeze, hidden_size = self.hidden_size, batch_norm=self.batch_norm)
+            
+        self.model = self.model.to(device)
         
         # ========== SETTINGS: DATA TRANSFORMS ==========
         normalize = transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  
