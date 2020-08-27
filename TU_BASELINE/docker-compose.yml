@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+    mart:
+        image: mart-code
+        ports:
+            - 8888:8888
+        working_dir: /MART
+        volumes:
+            - ./:/MART/MART-Code
+            - ../OUTPUT_MERGED:/MART/MART-Data
+        environment:
+            - GRANT_SUDO="yes"
+        user:
+            root
