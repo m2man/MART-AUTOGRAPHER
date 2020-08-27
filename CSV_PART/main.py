@@ -4,21 +4,18 @@ import joblib
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-import random
-random.seed(1509)
+from sklearn.model_selection import train_test_split
 
-def run_train():
+def run_train(seed=1509):
     # embbeded features of each images in each task id
     # dict[task_id]['images'] = list of images within the task_id
     # dict[task_id]['features'] = nympy array (n_images, ft_dim=1024) features of each images
     
-    a = joblib.load('tabular.joblib')
+    a = joblib.load('tabular_train.joblib')
     a = a.drop(columns=['event_id', 'source', 'sub_id'])
-    a = a.sample(frac=1)
-    train_portion = 0.8
-    train_numb = int(train_portion * len(a))
-    train_df = a.iloc[0:train_numb, :]
-    val_df = a.iloc[train_numb:, :]
+    train_df, val_df, y_train, y_val = train_test_split(a[list(a.columns)[:-1]], a[list(a.columns)[-1]], stratify=a[list(a.columns)[-1]], test_size=0.3, random_state=seed)
+    train_df['label'] = y_train
+    val_df['label'] = y_val
     
     BATCH_SIZE = 64
     MAX_EPOCH = 100
@@ -28,7 +25,7 @@ def run_train():
     LAYER_DIM = [1000, 500, 128]
     MODEL_NAME = 'CSV_TABULAR'
     CHECKPOINT = None 
-    SAVE_DIR = 'INCLUDE_NA'
+    SAVE_DIR = 'INCLUDE_NA_1'
     OPTIM = 'Adam'
     DROPOUT = 0.5
     LR = 0.005
@@ -68,7 +65,7 @@ def run_kfold(k_fold=10):
     acc_val = np.zeros(k_fold)
 
     for k in range(k_fold):
-        result = run_train()
+        result = run_train(seed=1509+k)
         loss_val[k] = result['loss_val_save']
         loss_train[k] = result['loss_train_save']
         acc_val[k] = result['acc_val_save']
@@ -118,4 +115,5 @@ def run_extract_features():
     
     joblib.dump(embed_result, 'tabular_embeded_ft_train.joblib')
     
-run_extract_features()
+# run_extract_features()
+run_kfold(k_fold=10)

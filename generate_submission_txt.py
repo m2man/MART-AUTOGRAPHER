@@ -14,10 +14,11 @@ task_id = [f"{x}_{y}" for x, y in zip(sub_id, event_id)]
 task_id_np = np.asarray(task_id)
 
 # PROPS IS THE NUMPY ARRAY (N_TASKID, 20) [TEST.CSV HAS 140 TASK-ID WITH 20 PROBABILITIES OF 20 ACTIVITIES]
-probs = joblib.load(f'joblib_files/act_probs_{RUN}_RUN_0_Unfreeze.joblib')
+#probs = joblib.load(f'joblib_files/autographer_prediction_test_RUN_6_Unfreeze.joblib')
+probs = joblib.load(f'CSV_PART/tabular_prediction.joblib')
 
 # GENERATE TXT FILE
-submission = "group_id: group50 ouroboros 1\n"
+submission = "group_id: group14 forests 4\n"
 
 for act in range(20):
     probs_act = probs[:, act]
@@ -50,7 +51,7 @@ for act in range(20):
     for task in task_ranking_list:
         submission += f"{act_str} {task}\n"
 
-submission_write = open(f"Submission/submission_{RUN}.txt", "w")
+submission_write = open(f"Submission/submission_test_tabular.txt", "w")
 submission_write.write(submission)
 submission_write.close()
 

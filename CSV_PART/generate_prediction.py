@@ -16,7 +16,8 @@ if 'label' in list(a.columns):
 INPUT_DIM = len(a.columns)    
 LAYER_DIM = [1000, 500, 128]
 MODEL_NAME = 'CSV_TABULAR'
-CHECKPOINT = 'INCLUDE_NA/CSV_TABULAR-26082020-155927.pth.tar' 
+# CHECKPOINT = 'INCLUDE_NA/CSV_TABULAR-26082020-155927.pth.tar' 
+CHECKPOINT = 'INCLUDE_NA_1/CSV_TABULAR-27082020-114832.pth.tar'
 DROPOUT = 0.5
 BATCH_NORM = True
 
@@ -26,6 +27,7 @@ model_info['layer_dim'] = LAYER_DIM
 model_info['model_name'] = MODEL_NAME
 model_info['dropout'] = DROPOUT
 model_info['batch_norm'] = BATCH_NORM
+model_info['checkpoint'] = CHECKPOINT
 evaluator = Evaluator(json_info=model_info)
 
 print('Predicting ...')

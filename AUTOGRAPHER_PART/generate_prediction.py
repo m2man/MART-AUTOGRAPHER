@@ -6,16 +6,19 @@ import os
 from tqdm import tqdm
 import joblib
 
-RUN = 'trainB' # trainA, trainB, test
+RUN = 'test' # trainA, trainB, test
 
 IMG_DIR = '/mnt/sda/hong01-data/MART_DATA/OUTPUT_MERGED/AUTOGRAPHER'
 PANDAS_DIR = '/mnt/sda/hong01-data/MART_DATA/OUTPUT_MERGED/PANDAS'
 
-MODEL_NAME = 'EFFICIENT-B4'
+#MODEL_NAME = 'EFFICIENT-B4'
+MODEL_NAME = 'RESNET34'
 CROP_SIZE = 224
-CHECKPOINT = 'RUN_0_Unfreeze/EFFICIENT-B4-18082020-020739.pth.tar'
-HIDDEN_SIZE = 1024
-BATCH_NORM = False
+#CHECKPOINT = 'RUNS/RUN_5_Unfreeze/EFFICIENT-B4-20082020-121209.pth.tar'
+CHECKPOINT = 'RUNS/RUN_6_Unfreeze/RESNET34-27082020-000043.pth.tar'
+HIDDEN_SIZE = 512
+BATCH_NORM = True
+DROPOUT = 0.5
     
 model_info = {}
 model_info['model_name'] = MODEL_NAME
@@ -23,6 +26,7 @@ model_info['crop_size'] = CROP_SIZE
 model_info['checkpoint'] = CHECKPOINT
 model_info['hidden_size'] = HIDDEN_SIZE
 model_info['batch_norm'] = BATCH_NORM
+model_info['dropout'] = DROPOUT
 
 evaluator = MART_Evaluator(model_info)
 
@@ -51,4 +55,4 @@ for idx_task, task in tqdm(enumerate(task_id)):
     task_mean_probs = np.mean(task_probs, axis=0)
     list_probs[idx_task] = task_mean_probs
     
-joblib.dump(list_probs, f'act_probs_{RUN}.joblib')
+joblib.dump(list_probs, f'autographer_prediction_{RUN}_RUN_6_Unfreeze.joblib')

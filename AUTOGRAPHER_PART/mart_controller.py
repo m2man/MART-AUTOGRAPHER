@@ -302,7 +302,7 @@ class MART_Evaluator():
             self.model = EfficientNet_MART(classCount=20, structure=structure, dropout=self.dropout, hidden_size = self.hidden_size, batch_norm=self.batch_norm)
             
         if 'resnet' in self.model_name.lower():
-            self.model = ResNet34_MART(classCount=20, dropout=self.dropout, freeze=self.freeze, hidden_size = self.hidden_size, batch_norm=self.batch_norm)
+            self.model = ResNet34_MART(classCount=20, dropout=self.dropout, hidden_size = self.hidden_size, batch_norm=self.batch_norm)
             
         self.model = self.model.to(device)
         
