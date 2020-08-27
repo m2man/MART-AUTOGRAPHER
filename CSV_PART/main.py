@@ -79,7 +79,7 @@ def run_kfold(k_fold=10):
     print(f"[AccMean]Min-Max-Mean: {np.min(acc_val)}-{np.max(acc_val)}-{np.mean(acc_val)}")
 
 def run_extract_features():
-    a = joblib.load('tabular_train.joblib')
+    a = joblib.load('tabular_test.joblib')
     event_id = list(a['event_id'])
     source = list(a['source'])
     sub_id = list(a['sub_id'])
@@ -90,7 +90,7 @@ def run_extract_features():
     INPUT_DIM = len(a.columns)    
     LAYER_DIM = [1000, 500, 128]
     MODEL_NAME = 'CSV_TABULAR'
-    CHECKPOINT = 'INCLUDE_NA/CSV_TABULAR-26082020-155927.pth.tar' 
+    CHECKPOINT = 'INCLUDE_NA_1/CSV_TABULAR-27082020-114832.pth.tar' 
     DROPOUT = 0.5
     BATCH_NORM = True
     
@@ -113,7 +113,7 @@ def run_extract_features():
         embed = embed.cpu().numpy()
         embed_result[task_id] = embed
     
-    joblib.dump(embed_result, 'tabular_embeded_ft_train.joblib')
+    joblib.dump(embed_result, 'tabular_embeded_ft_test.joblib')
     
-# run_extract_features()
-run_kfold(k_fold=10)
+run_extract_features()
+#run_kfold(k_fold=10)
