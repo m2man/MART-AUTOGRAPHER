@@ -2,11 +2,14 @@ import joblib
 import os
 import numpy as np
 import pandas as pd
+import platform
 
 
 # READ TEST.CSV
 RUN = 'test' # trainA, trainB, test
 PANDAS_DIR = '/mnt/sda/hong01-data/MART_DATA/OUTPUT_MERGED/PANDAS'
+if platform.system() == 'Windows':
+    PANDAS_DIR = 'D:\\DCU\\MART\\OUTPUT_MERGED\\PANDAS'
 data = pd.read_csv(f"{PANDAS_DIR}/{RUN}.csv")
 sub_id = list(data['sub_id'])
 event_id = list(data['event_id'])
@@ -15,10 +18,10 @@ task_id_np = np.asarray(task_id)
 
 # PROPS IS THE NUMPY ARRAY (N_TASKID, 20) [TEST.CSV HAS 140 TASK-ID WITH 20 PROBABILITIES OF 20 ACTIVITIES]
 #probs = joblib.load(f'joblib_files/autographer_prediction_test_RUN_6_Unfreeze.joblib')
-probs = joblib.load(f'joblib_files/tabular_r34_prediction.joblib')
+probs = joblib.load(f'joblib_files/autographer-embedded_signal_extree_RUN9.joblib')
 
 # GENERATE TXT FILE
-submission = "group_id: group14 forests 4\n"
+submission = "group_id: group14 forests 9\n"
 
 for act in range(20):
     probs_act = probs[:, act]
@@ -51,7 +54,7 @@ for act in range(20):
     for task in task_ranking_list:
         submission += f"{act_str} {task}\n"
 
-submission_write = open(f"Submission/submission_test_tabular_r34.txt", "w")
+submission_write = open(f"Submission/submission-autographer-embedded_signal_extree_RUN9.txt", "w")
 submission_write.write(submission)
 submission_write.close()
 
