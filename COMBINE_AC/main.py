@@ -18,11 +18,11 @@ def run_train():
     TRAIN_DF = train_df
     VAL_DF = val_df
     
-    MODEL_NAME = 'COMBINE-E4'
-    IMG_BACKBONE = 'efficient' # or resnet34
-    # CHECKPOINT = None 
-    CHECKPOINT = 'RUN_1/COMBINE-E4-27082020-114415.pth.tar'
-    SAVE_DIR = 'RUN_1_Unfreeze'
+    MODEL_NAME = 'COMBINE-R34'
+    IMG_BACKBONE = 'resnet' # or resnet34
+    #CHECKPOINT = None 
+    CHECKPOINT = 'RUN_2/COMBINE-R34-27082020-134115.pth.tar'
+    SAVE_DIR = 'RUN_2_Unfreeze'
     OPTIM = 'Adam'
     DROPOUT = 0.5
     LR = 0.001

@@ -364,7 +364,7 @@ class Evaluator():
         return outLoss, accuracy
   
     # ---------- PREDICT ON CUSTOM TASK_ID (ImageFT) ---------
-    def get_pred(self, img_path, tabular_row, props=True):
+    def get_pred(self, img_path, tabular_row, probs=True):
         tab = torch.from_numpy(tabular_row)
         tab = tab.type(torch.FloatTensor)
         tab = tab.unsqueeze(0)
@@ -377,7 +377,7 @@ class Evaluator():
             varImgInput = img.to(device)
             varTabInput = tab.to(device)
             varOutput = self.model(varImgInput, varTabInput)
-            if props:
+            if probs:
                 varOutput_softmax = torch.nn.functional.softmax(varOutput, dim=1)
             else:
                 varOutput_softmax = torch.nn.functional.log_softmax(varOutput, dim=1)

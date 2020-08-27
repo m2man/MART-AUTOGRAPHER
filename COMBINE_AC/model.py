@@ -143,8 +143,10 @@ class Combine_Model(nn.Module):
         self.img_backbone = img_backbone
         
         if self.img_backbone.lower() == 'efficient':
+            print("USING EFFICIENTNET")
             self.img = Autographer_E4(structure='b4', freeze=img_freeze, dropout=dropout, hidden_size=img_hidden_size, batch_norm=batch_norm)
         else: # resnet (ResNet34)
+            print("USING RESNET34")
             self.img = Autographer_ResNet34(freeze=img_freeze, dropout=dropout, hidden_size=img_hidden_size, batch_norm=batch_norm)
             
         self.tabular = Tabular(input_dim=tabular_input_dim, layer_dim=tabular_layer_dim, dropout=dropout, batch_norm=batch_norm)
